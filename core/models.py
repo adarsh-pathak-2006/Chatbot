@@ -10,8 +10,8 @@ class Chat(models.Model):
 
 class Conversation(models.Model):
     chat=models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='convo')
-    request=models.TextField()
-    response=models.TextField()
+    chat_request=models.TextField()
+    chat_response=models.TextField()
     time=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

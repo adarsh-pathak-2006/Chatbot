@@ -27,4 +27,4 @@ class ConversationSeriailizer(ModelSerializer):
 class InputSerializer(ModelSerializer):
     class Meta:
         model=Conversation
-        fields=['request']
+        fields=['chat_request']
