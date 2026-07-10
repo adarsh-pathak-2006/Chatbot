@@ -4,6 +4,7 @@ from core.models import Chat, Conversation
 from core.serializer import *
 from rest_framework.response import Response
 from services.response import generate_response
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPI(APIView):
@@ -25,6 +26,7 @@ class RegisterAPI(APIView):
                   return Response({ 'invalid':'invalid input' })
             
 class ChatAPI(APIView):
+    permission_classes=[IsAuthenticated]
     def get(self, request):
        data_user=Chat.objects.filter(user=request.user)
        data=Conversation.objects.filter(chat=data_user)
