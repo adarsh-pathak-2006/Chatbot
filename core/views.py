@@ -23,23 +23,22 @@ class RegisterAPI(APIView):
                         User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, password=password)
                         return Response({ 'message':'Registration successfull' })
             else:
-                  return Response({ 'invalid':'invalid input' })
+                  return Response(serial.errors, status=400)
             
 class ChatAPI(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request):
-       data_user=Chat.objects.filter(user=request.user)
-       data=Conversation.objects.filter(chat=data_user)
+       data=Conversation.objects.filter(chat__user=request.user)
        serial=ConversationSeriailizer(data, many=True)
        return Response(serial.data)
     
     def post(self, request):
         serial=InputSerializer(data=request.data)
         if serial.is_valid():
-            input=serial.validated_data['request']
+            input=serial.validated_data['chat_request']
             output=generate_response(input)
-            chat_user=Chat.objects.filter(user=request.user)
+            chat_user, _ = Chat.objects.get_or_create(user=request.user)
             Conversation.objects.create(chat=chat_user, chat_request=input, chat_response=output)
             return Response(output)
         else:
-             return Response({ 'invalid':'invalid input' })
+             return Response(serial.errors, status=400)

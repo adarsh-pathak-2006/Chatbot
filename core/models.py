@@ -15,5 +15,5 @@ class Conversation(models.Model):
     time=models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.request[:100]
+        return self.chat_request[:100]
 

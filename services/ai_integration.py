@@ -5,8 +5,8 @@ client=genai.Client(
     api_key=settings.GEMINI_API_KEY
 )
 
-def generate_ouput(prompt):
-    output=client.models.generate_response(
+def generate_output(prompt):
+    output=client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt,
     )
