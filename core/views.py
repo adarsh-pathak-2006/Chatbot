@@ -46,7 +46,7 @@ class ConversationAPI(APIView):
         serial=ConversationSeriailizer(convo, many=True)
         return Response(serial.data)
 
-    def post(self, request, pk):
+    def post(self, request):
         serial=InputSerializer(data=request.data)
         if serial.is_valid():
             input=serial.validated_data['chat_request']
