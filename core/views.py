@@ -40,19 +40,20 @@ class ChatAPI(APIView):
             return Response({ 'invalid':'invalid inputs' })
 
 class ConversationAPI(APIView):
+    permission_classes=[IsAuthenticated]
     def get(self, request, pk):
-        data=get_object_or_404(Chat, id=pk)
+        data=get_object_or_404(Chat, user=request.user, id=pk)
         convo=Conversation.objects.filter(chat=data)
         serial=ConversationSeriailizer(convo, many=True)
         return Response(serial.data)
 
-    def post(self, request):
+    def post(self, request, pk):
         serial=InputSerializer(data=request.data)
         if serial.is_valid():
             input=serial.validated_data['chat_request']
             output=generate_response(input)
-            chat_user, _ = Chat.objects.get_or_create(user=request.user)
-            Conversation.objects.create(chat=chat_user, chat_request=input, chat_response=output)
+            chat_data=get_object_or_404(Chat, user=request.user, id=pk)
+            Conversation.objects.create(chat=chat_data, chat_request=input, chat_response=output)
             return Response(output)
         else:
              return Response(serial.errors, status=400)
