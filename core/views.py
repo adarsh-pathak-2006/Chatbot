@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from core.models import Chat, Conversation
 from core.serializer import *
@@ -28,11 +28,25 @@ class RegisterAPI(APIView):
 class ChatAPI(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request):
-       data=Conversation.objects.filter(chat__user=request.user)
-       serial=ConversationSeriailizer(data, many=True)
-       return Response(serial.data)
-    
+        data=Chat.objects.filter(user=request.user)
+        serial=ChatSerializer(data, many=True)
+        return Response(serial.data)
     def post(self, request):
+        serial=ChatSerializer(data=request.data)
+        if serial.is_valid():
+            serial.save(user=request.user)
+            return Response(serial.data)
+        else:
+            return Response({ 'invalid':'invalid inputs' })
+
+class ConversationAPI(APIView):
+    def get(self, request, pk):
+        data=get_object_or_404(Chat, id=pk)
+        convo=Conversation.objects.filter(chat=data)
+        serial=ConversationSeriailizer(convo, many=True)
+        return Response(serial.data)
+
+    def post(self, request, pk):
         serial=InputSerializer(data=request.data)
         if serial.is_valid():
             input=serial.validated_data['chat_request']
